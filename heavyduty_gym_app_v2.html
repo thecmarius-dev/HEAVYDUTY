@@ -1,0 +1,458 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --r:#c8392b;--rh:#e04030;--bg:#0a0a0a;--s:#141414;--s2:#1c1c1c;--s3:#242424;
+  --txt:#f0ede8;--txt2:#888;--txt3:#555;--bdr:#2a2a2a;
+  --ff:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;
+  --green:#2d6a3f;--greenbg:#1a3a24;--amber:#a06000;--amberbg:#2a1e08;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:14px;line-height:1.5}
+.app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
+.wordmark{font-family:var(--ff);font-size:28px;letter-spacing:1px;color:var(--txt)}
+.wordmark em{color:var(--r);font-style:normal}
+.topbar-right{text-align:right}
+.streak-num{font-family:var(--ff);font-size:28px;color:var(--txt);line-height:1}
+.streak-lbl{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px}
+
+.tabs{display:flex;padding:18px 20px 0;gap:0;border-bottom:1px solid var(--bdr)}
+.tab{flex:1;background:none;border:none;color:var(--txt3);font-family:var(--fb);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;padding:0 0 12px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab.on{color:var(--txt);border-color:var(--r)}
+
+.screen{display:none;padding:20px}
+.screen.on{display:block}
+
+.today-block{background:var(--s);border:1px solid var(--bdr);border-top:3px solid var(--r);border-radius:12px;padding:18px;margin-bottom:16px}
+.today-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--r);margin-bottom:6px}
+.today-title{font-family:var(--ff);font-size:36px;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.today-sub{font-size:12px;color:var(--txt2);margin-bottom:16px}
+.today-actions{display:flex;gap:8px}
+.btn-primary{background:var(--r);border:none;color:white;font-family:var(--ff);font-size:16px;letter-spacing:2px;padding:12px 20px;border-radius:8px;cursor:pointer;flex:1;transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:none;border:1px solid var(--bdr);color:var(--txt2);font-family:var(--fb);font-size:12px;padding:12px 16px;border-radius:8px;cursor:pointer;transition:background .15s}
+.btn-secondary:hover{background:var(--s2)}
+
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px}
+.wday{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wday-lbl{font-size:10px;color:var(--txt3);text-transform:uppercase}
+.wday-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--txt3);background:var(--s2);cursor:pointer;transition:background .15s,color .15s;border:1.5px solid transparent}
+.wday-dot.done{background:#1a3a24;color:#4caf72;border-color:#2d6a3f}
+.wday-dot.today{border-color:var(--r);color:var(--txt)}
+.wday-dot.rest{opacity:.35}
+.wday-dot:hover:not(.rest){background:var(--s3)}
+
+.section-lbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--txt2);margin-bottom:10px}
+.mini-card{background:var(--s);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.mini-card:hover{border-color:#444}
+.mini-card-row{display:flex;justify-content:space-between;align-items:center}
+.mini-card-name{font-size:14px;font-weight:500;color:var(--txt)}
+.badge{font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:20px;background:var(--s3);color:var(--txt2);border:1px solid var(--bdr)}
+.badge.done{background:var(--greenbg);color:#4caf72;border-color:var(--green)}
+.badge.active{background:#3a1010;color:#e07070;border-color:#6a2020}
+.mini-card-detail{font-size:12px;color:var(--txt2);margin-top:4px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:20px}
+.stat-box{background:var(--s);border:1px solid var(--bdr);border-radius:10px;padding:14px 12px}
+.stat-n{font-family:var(--ff);font-size:28px;color:var(--txt);letter-spacing:1px;line-height:1}
+.stat-u{font-size:11px;color:var(--txt2);margin-top:3px}
+
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cal-title{font-family:var(--ff);font-size:22px;letter-spacing:1px}
+.cal-nav{display:flex;gap:8px}
+.cal-arrow{background:none;border:1px solid var(--bdr);color:var(--txt2);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.cal-arrow:hover{background:var(--s2)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;color:var(--txt3);cursor:pointer;transition:background .15s}
+.cal-cell.hdr{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);aspect-ratio:auto;padding:4px 0;cursor:default}
+.cal-cell.trained{background:var(--greenbg);color:#4caf72;font-weight:500}
+.cal-cell.rest-day{background:var(--s2);color:var(--txt3)}
+.cal-cell.today-cal{border:1.5px solid var(--r);color:var(--txt)}
+.cal-cell:hover:not(.hdr):not(.empty){background:var(--s3)}
+.cal-cell.empty{cursor:default}
+
+.cal-legend{display:flex;gap:16px;margin-top:12px;margin-bottom:20px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2)}
+.leg-dot{width:10px;height:10px;border-radius:3px}
+.leg-dot.t{background:#2d6a3f}
+.leg-dot.r{background:var(--s2)}
+.leg-dot.e{border:1.5px solid var(--r);background:transparent}
+
+.pr-section{margin-bottom:20px}
+.pr-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bdr)}
+.pr-row:last-child{border-bottom:none}
+.pr-name{font-size:13px;color:var(--txt)}
+.pr-val{font-family:var(--ff);font-size:20px;color:var(--txt);letter-spacing:1px}
+.pr-sub{font-size:11px;color:var(--txt2)}
+.pr-delta{font-size:11px;color:#4caf72}
+
+.workout-screen{display:none}
+.workout-screen.on{display:block;padding:20px}
+.ws-back{background:none;border:none;color:var(--txt2);font-size:12px;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px}
+.ws-back:hover{color:var(--txt)}
+.ws-title{font-family:var(--ff);font-size:44px;letter-spacing:2px;line-height:1;margin-bottom:2px}
+.ws-meta{font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px}
+.mentzer-quote{border-left:3px solid var(--r);padding:10px 14px;margin-bottom:24px;font-size:12px;color:var(--txt2);font-style:italic;line-height:1.6}
+
+.ex-block{background:var(--s);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.ex-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.ex-name{font-size:15px;font-weight:500}
+.ex-set-label{font-family:var(--ff);font-size:20px;color:var(--r);letter-spacing:1px}
+.ex-tip{font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.5}
+.ex-logger{display:flex;gap:8px;align-items:center}
+.ex-input{background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-family:var(--fb);font-size:14px;padding:8px 10px;width:70px;text-align:center}
+.ex-input:focus{outline:none;border-color:#555}
+.ex-x{color:var(--txt3);font-size:12px}
+.ex-log-btn{background:var(--s3);border:1px solid var(--bdr);color:var(--txt2);font-size:12px;padding:8px 14px;border-radius:6px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.ex-log-btn:hover{background:var(--greenbg);color:#4caf72;border-color:var(--green)}
+.ex-log-btn.logged{background:var(--greenbg);color:#4caf72;border-color:var(--green)}
+.set-history{margin-top:8px;font-size:11px;color:var(--txt2)}
+.set-pill{display:inline-block;background:var(--s3);border:1px solid var(--bdr);border-radius:4px;padding:2px 8px;margin:2px 3px 2px 0;font-size:11px}
+
+.finish-btn{width:100%;background:var(--green);border:none;color:white;font-family:var(--ff);font-size:22px;letter-spacing:3px;padding:18px;border-radius:10px;cursor:pointer;margin-top:20px;opacity:.5;pointer-events:none;transition:opacity .2s}
+.finish-btn.ready{opacity:1;pointer-events:all}
+.finish-btn.ready:hover{opacity:.85}
+
+.superset-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--r);margin:-4px 0 8px;padding-left:2px}
+</style>
+
+<div class="app">
+  <div id="main-app">
+    <div class="topbar">
+      <div class="wordmark">HEAVY<em>DUTY</em></div>
+      <div class="topbar-right">
+        <div class="streak-num" id="streak-display">6</div>
+        <div class="streak-lbl">day streak</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('home',this)">Today</button>
+      <button class="tab" onclick="switchTab('calendar',this)">Calendar</button>
+      <button class="tab" onclick="switchTab('records',this)">Records</button>
+    </div>
+
+    <div id="s-home" class="screen on">
+      <div class="today-block">
+        <div class="today-label">Monday · Cycle A</div>
+        <div class="today-title">Chest<br>& Back</div>
+        <div class="today-sub">4 exercises · 1–2 sets each · ~38 min</div>
+        <div class="today-actions">
+          <button class="btn-primary" onclick="openWorkout('chest')">Start Session</button>
+          <button class="btn-secondary" onclick="markRest()">Skip / Rest</button>
+        </div>
+      </div>
+
+      <div class="section-lbl">This week</div>
+      <div class="week-row" id="week-row"></div>
+
+      <div class="section-lbl">Split overview</div>
+      <div class="mini-card" onclick="openWorkout('chest')">
+        <div class="mini-card-row">
+          <span class="mini-card-name">Chest & Back</span>
+          <span class="badge active">Monday</span>
+        </div>
+        <div class="mini-card-detail">Incline Press · Flye · Pulldown · Row</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-row">
+          <span class="mini-card-name">Legs</span>
+          <span class="badge">Wednesday</span>
+        </div>
+        <div class="mini-card-detail">Leg Press · Extension · Curl · Calf Raise</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-row">
+          <span class="mini-card-name">Shoulders & Arms</span>
+          <span class="badge">Friday</span>
+        </div>
+        <div class="mini-card-detail">Lateral Raise · OH Press · Curl · Pushdown</div>
+      </div>
+    </div>
+
+    <div id="s-calendar" class="screen">
+      <div class="cal-header">
+        <div class="cal-title" id="cal-month-title">April 2026</div>
+        <div class="cal-nav">
+          <button class="cal-arrow" onclick="shiftMonth(-1)">&#8249;</button>
+          <button class="cal-arrow" onclick="shiftMonth(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend">
+        <div class="leg-item"><div class="leg-dot t"></div>Trained</div>
+        <div class="leg-item"><div class="leg-dot r"></div>Rest</div>
+        <div class="leg-item"><div class="leg-dot e"></div>Today</div>
+      </div>
+
+      <div class="section-lbl">Monthly stats</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-n" id="cal-sessions">8</div><div class="stat-u">Sessions</div></div>
+        <div class="stat-box"><div class="stat-n" id="cal-vol">100%</div><div class="stat-u">Intensity</div></div>
+        <div class="stat-box"><div class="stat-n" id="cal-streak">6</div><div class="stat-u">Streak</div></div>
+      </div>
+    </div>
+
+    <div id="s-records" class="screen">
+      <div class="section-lbl">Personal records</div>
+      <div class="pr-section" style="background:var(--s);border:1px solid var(--bdr);border-radius:12px;padding:4px 16px">
+        <div class="pr-row">
+          <div><div class="pr-name">Incline Bench Press</div><div class="pr-sub">Last: Apr 7</div></div>
+          <div style="text-align:right"><div class="pr-val">102 <span style="font-size:13px;color:var(--txt2)">kg</span></div><div class="pr-delta">+5kg this month</div></div>
+        </div>
+        <div class="pr-row">
+          <div><div class="pr-name">Close-Grip Pulldown</div><div class="pr-sub">Last: Apr 7</div></div>
+          <div style="text-align:right"><div class="pr-val">88 <span style="font-size:13px;color:var(--txt2)">kg</span></div><div class="pr-delta">+3kg this month</div></div>
+        </div>
+        <div class="pr-row">
+          <div><div class="pr-name">Leg Press</div><div class="pr-sub">Last: Apr 9</div></div>
+          <div style="text-align:right"><div class="pr-val">240 <span style="font-size:13px;color:var(--txt2)">kg</span></div><div class="pr-delta">+20kg this month</div></div>
+        </div>
+        <div class="pr-row">
+          <div><div class="pr-name">Overhead Press</div><div class="pr-sub">Last: Apr 11</div></div>
+          <div style="text-align:right"><div class="pr-val">72 <span style="font-size:13px;color:var(--txt2)">kg</span></div><div class="pr-delta">+2kg this month</div></div>
+        </div>
+        <div class="pr-row">
+          <div><div class="pr-name">Barbell Curl</div><div class="pr-sub">Last: Apr 11</div></div>
+          <div style="text-align:right"><div class="pr-val">56 <span style="font-size:13px;color:var(--txt2)">kg</span></div><div class="pr-delta">+4kg this month</div></div>
+        </div>
+      </div>
+
+      <div class="section-lbl" style="margin-top:20px">Volume chart — April</div>
+      <div style="background:var(--s);border:1px solid var(--bdr);border-radius:12px;padding:16px">
+        <canvas id="vol-chart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div id="workout-panel" class="workout-screen">
+    <button class="ws-back" onclick="closeWorkout()">&#8592; back</button>
+    <div id="ws-title" class="ws-title"></div>
+    <div id="ws-meta" class="ws-meta"></div>
+    <div class="mentzer-quote" id="ws-quote"></div>
+    <div id="ws-exercises"></div>
+    <button class="finish-btn" id="finish-btn" onclick="finishWorkout()">Finish Session</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DAYS=['S','M','T','W','T','F','S'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+let calYear=2026,calMonth=3;
+const today=new Date(2026,3,14);
+
+const trainedDays={
+  '2026-3-1':1,'2026-3-3':1,'2026-3-5':1,'2026-3-8':1,'2026-3-10':1,'2026-3-12':1,
+  '2026-3-15':1,'2026-3-17':1,'2026-3-19':1,'2026-3-22':1,'2026-3-24':1,'2026-3-26':1,
+  '2026-4-1':1,'2026-4-3':1,'2026-4-5':1,'2026-4-7':1,'2026-4-9':1,'2026-4-11':1
+};
+
+const workouts={
+  chest:{
+    title:'Chest\n& Back',titleFlat:'Chest & Back',
+    meta:'Cycle A · 4 exercises · ~38 min',
+    quote:'"One hard set taken to absolute failure is worth more than 20 mediocre ones." — Mike Mentzer',
+    exercises:[
+      {name:'Dumbbell Flye',sets:'1×10–12',tip:'Pre-exhaust. Full stretch at bottom. No pause at top. Slow eccentric.',superset:'Superset A — pre-exhaust first'},
+      {name:'Incline Barbell Press',sets:'1×6–10',tip:'Immediately after flyes. Take to positive failure, then 2–3 forced reps.'},
+      {name:'Close-Grip Pulldown',sets:'1×8–10',tip:'Full lat stretch at top. Drive elbows down. Pause at contraction.',superset:'Superset B — pre-exhaust first'},
+      {name:'Bent-Over Barbell Row',sets:'1×6–10',tip:'Immediately after pulldowns. Chest to bench. Absolute failure required.'}
+    ]
+  },
+  legs:{
+    title:'Legs',titleFlat:'Legs',
+    meta:'Cycle A · 4 exercises · ~35 min',
+    quote:'"The harder and briefer your training, the more you must rest to allow growth." — Mike Mentzer',
+    exercises:[
+      {name:'Leg Extension',sets:'1×12–15',tip:'Pre-exhaust. Peak contraction 1 second. Full failure.',superset:'Superset A — pre-exhaust first'},
+      {name:'Leg Press',sets:'1×10–12',tip:'Immediately after extensions. Deep range. Don\'t lockout at top.'},
+      {name:'Lying Leg Curl',sets:'1×10–12',tip:'Full stretch. Slow 4-second negative. Absolute failure.'},
+      {name:'Standing Calf Raise',sets:'1×15–20',tip:'Full dorsiflexion stretch at bottom. Hold 1s at top. Failure required.'}
+    ]
+  },
+  shoulders:{
+    title:'Shoulders\n& Arms',titleFlat:'Shoulders & Arms',
+    meta:'Cycle A · 4 exercises · ~36 min',
+    quote:'"Less is more — if and only if the less is of the highest possible intensity." — Mike Mentzer',
+    exercises:[
+      {name:'Dumbbell Lateral Raise',sets:'1×10–12',tip:'Pre-exhaust. Slight forward lean. Lead with elbows. No swinging.',superset:'Superset A — pre-exhaust first'},
+      {name:'Overhead Press',sets:'1×6–10',tip:'Immediately after laterals. Full range. Failure is mandatory.'},
+      {name:'Barbell Curl',sets:'1×8–10',tip:'Strict form. No body swing. 4-second negative on every rep.'},
+      {name:'Cable Tricep Pushdown',sets:'1×10–12',tip:'Full lockout at bottom. Slow eccentric. Elbows pinned to sides.'}
+    ]
+  }
+};
+
+let activeWorkout=null;
+let loggedSets={};
+let allLogged={};
+
+function switchTab(name,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+name).classList.add('on');
+  btn.classList.add('on');
+  if(name==='calendar')renderCal();
+  if(name==='records')renderChart();
+}
+
+function openWorkout(type){
+  activeWorkout=type;
+  loggedSets={};
+  const w=workouts[type];
+  document.getElementById('main-app').style.display='none';
+  const wp=document.getElementById('workout-panel');
+  wp.classList.add('on');
+  const lines=w.title.split('\n');
+  document.getElementById('ws-title').innerHTML=lines.join('<br>');
+  document.getElementById('ws-meta').textContent=w.meta;
+  document.getElementById('ws-quote').textContent=w.quote;
+
+  let html='';
+  w.exercises.forEach((ex,i)=>{
+    if(ex.superset) html+=`<div class="superset-label">${ex.superset}</div>`;
+    html+=`<div class="ex-block" id="ex-block-${i}">
+      <div class="ex-top"><span class="ex-name">${ex.name}</span><span class="ex-set-label">${ex.sets}</span></div>
+      <div class="ex-tip">${ex.tip}</div>
+      <div class="ex-logger">
+        <input class="ex-input" type="number" placeholder="kg" id="ex-kg-${i}" min="0" max="500">
+        <span class="ex-x">×</span>
+        <input class="ex-input" type="number" placeholder="reps" id="ex-reps-${i}" min="1" max="30">
+        <button class="ex-log-btn" onclick="logSet(${i},'${ex.name}')">Log set</button>
+      </div>
+      <div class="set-history" id="ex-hist-${i}"></div>
+    </div>`;
+  });
+  document.getElementById('ws-exercises').innerHTML=html;
+  checkFinish();
+}
+
+function logSet(i,name){
+  const kg=document.getElementById('ex-kg-'+i).value;
+  const reps=document.getElementById('ex-reps-'+i).value;
+  if(!kg||!reps)return;
+  if(!loggedSets[i])loggedSets[i]=[];
+  loggedSets[i].push({kg,reps});
+  const hist=document.getElementById('ex-hist-'+i);
+  let pills=loggedSets[i].map(s=>`<span class="set-pill">${s.kg}kg × ${s.reps}</span>`).join('');
+  hist.innerHTML=pills;
+  const btn=document.querySelector(`#ex-block-${i} .ex-log-btn`);
+  btn.classList.add('logged');
+  btn.textContent='Logged ✓';
+  document.getElementById('ex-kg-'+i).value='';
+  document.getElementById('ex-reps-'+i).value='';
+  checkFinish();
+  if(!allLogged[name])allLogged[name]=[];
+  allLogged[name].push({kg:parseFloat(kg),reps:parseInt(reps),date:new Date()});
+}
+
+function checkFinish(){
+  const w=workouts[activeWorkout];
+  const done=Object.keys(loggedSets).length;
+  const btn=document.getElementById('finish-btn');
+  if(done>=Math.ceil(w.exercises.length/2)){btn.classList.add('ready')}
+}
+
+function finishWorkout(){
+  const key=`${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  trainedDays[key]=1;
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('workout-panel').classList.remove('on');
+  document.querySelectorAll('.mini-card').forEach((c,i)=>{
+    const badges=c.querySelectorAll('.badge');
+    badges.forEach(b=>{if(b.classList.contains('active')){b.classList.remove('active');b.classList.add('done');b.textContent='Done'}});
+  });
+  buildWeekRow();
+}
+
+function closeWorkout(){
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('workout-panel').classList.remove('on');
+}
+
+function markRest(){
+  alert('Rest day logged. Recovery is part of the program — Mentzer trained you to rest as hard as you train.');
+}
+
+function buildWeekRow(){
+  const row=document.getElementById('week-row');
+  const mon=new Date(2026,3,13);
+  const days=['M','T','W','T','F','S','S'];
+  const types=['train','rest','train','rest','train','rest','rest'];
+  const dates=[13,14,15,16,17,18,19];
+  let html='';
+  dates.forEach((d,i)=>{
+    const key=`2026-3-${d}`;
+    const isToday=(d===14);
+    const isDone=!!trainedDays[`2026-${today.getMonth()}-${d}`];
+    let cls='wday-dot';
+    if(types[i]==='rest')cls+=' rest';
+    else if(isDone)cls+=' done';
+    else if(isToday)cls+=' today';
+    html+=`<div class="wday"><div class="wday-lbl">${days[i]}</div><div class="${cls}">${d}</div></div>`;
+  });
+  row.innerHTML=html;
+}
+
+function renderCal(){
+  const title=document.getElementById('cal-month-title');
+  title.textContent=`${MONTHS[calMonth]} ${calYear}`;
+  const grid=document.getElementById('cal-grid');
+  let html='';
+  ['S','M','T','W','T','F','S'].forEach(d=>html+=`<div class="cal-cell hdr">${d}</div>`);
+  const first=new Date(calYear,calMonth,1).getDay();
+  const daysIn=new Date(calYear,calMonth+1,0).getDate();
+  for(let i=0;i<first;i++)html+=`<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=daysIn;d++){
+    const key=`${calYear}-${calMonth}-${d}`;
+    const isToday=(calYear===2026&&calMonth===3&&d===14);
+    let cls='cal-cell';
+    const dow=new Date(calYear,calMonth,d).getDay();
+    if(trainedDays[key])cls+=' trained';
+    else if(dow===2||dow===4||dow===1)cls+=' rest-day';
+    if(isToday)cls+=' today-cal';
+    html+=`<div class="${cls}">${d}</div>`;
+  }
+  grid.innerHTML=html;
+  const sessions=Object.keys(trainedDays).filter(k=>k.startsWith(`${calYear}-${calMonth}-`)).length;
+  document.getElementById('cal-sessions').textContent=sessions;
+}
+
+function shiftMonth(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}
+  if(calMonth>11){calMonth=0;calYear++;}
+  renderCal();
+}
+
+function renderChart(){
+  const canvas=document.getElementById('vol-chart');
+  if(canvas._chart)canvas._chart.destroy();
+  const ctx=canvas.getContext('2d');
+  const c=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['Wk1','Wk2','Wk3','Wk4'],
+      datasets:[
+        {label:'Chest/Back',data:[3,4,3,4],backgroundColor:'#c8392b88',borderColor:'#c8392b',borderWidth:1,borderRadius:4},
+        {label:'Legs',data:[2,3,3,2],backgroundColor:'#2d6a3f88',borderColor:'#4caf72',borderWidth:1,borderRadius:4},
+        {label:'Shoulders',data:[2,2,3,3],backgroundColor:'#1a4a8a88',borderColor:'#4a8adf',borderWidth:1,borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{labels:{color:'#888',font:{size:11},boxWidth:12}}},
+      scales:{
+        x:{ticks:{color:'#555',font:{size:11}},grid:{color:'#1e1e1e'}},
+        y:{ticks:{color:'#555',font:{size:11},stepSize:1},grid:{color:'#1e1e1e'},beginAtZero:true}
+      }
+    }
+  });
+  canvas._chart=c;
+}
+
+buildWeekRow();
+</script>
